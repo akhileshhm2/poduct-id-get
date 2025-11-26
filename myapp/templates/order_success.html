@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Order Summary</title>
+<title>Order Summary & Payment</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
@@ -24,7 +24,6 @@
     border-radius: 14px;
     border: 1px solid #2a2a2a;
     box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    animation: fadeIn 0.6s ease-in-out;
   }
 
   h1 {
@@ -42,9 +41,7 @@
     padding-bottom: 10px;
   }
 
-  .section {
-    margin-bottom: 20px;
-  }
+  .section { margin-bottom: 20px; }
 
   .item {
     display: flex;
@@ -62,30 +59,24 @@
     margin-top: 10px;
   }
 
-  .btn-home {
+  #rzp-button {
     background: linear-gradient(135deg, #ff8800, #ff6600);
     color: #000;
     padding: 14px 22px;
     border-radius: 10px;
     font-size: 1rem;
     font-weight: 600;
-    text-decoration: none;
+    width: 100%;
     display: block;
-    width: fit-content;
-    margin: 30px auto 0;
-    transition: 0.3s ease;
+    margin-top: 30px;
+    cursor: pointer;
+    border: none;
   }
 
-  .btn-home:hover {
+  #rzp-button:hover {
     background: linear-gradient(135deg, #ff6600, #d95300);
-    transform: translateY(-3px);
-    box-shadow: 0 4px 18px rgba(255,102,0,0.5);
   }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
 </style>
 </head>
 
@@ -93,35 +84,66 @@
 
 <div class="success-container">
 
-  <h1>🎉 Order Summary!</h1>
-  <p style="text-align:center; color:#ccc;">Your order has been successfully placed. Please review your order summary below before proceeding to payment.</p>
+  <h1>🧾 Order Summary</h1>
+  <p style="text-align:center; color:#ccc;">Review your order and proceed to secure payment.</p>
 
-  <!-- CUSTOMER DETAILS -->
+  <!-- CUSTOMER INFO -->
   <h2>Customer Information</h2>
   <div class="section">
     <div class="item"><strong>Name:</strong> <span>{{ order.billing_details.full_name }}</span></div>
     <div class="item"><strong>Email:</strong> <span>{{ order.billing_details.email }}</span></div>
     <div class="item"><strong>Phone:</strong> <span>{{ order.billing_details.phone }}</span></div>
-    <div class="item"><strong>Address:</strong> 
+    <div class="item"><strong>Address:</strong>
       <span>{{ order.billing_details.address }}, {{ order.billing_details.city }}, {{ order.billing_details.country }} - {{ order.billing_details.postal_code }}</span>
     </div>
   </div>
 
-  <!-- ORDER SUMMARY -->
+  <!-- ORDER INFO -->
   <h2>Order Summary</h2>
   <div class="section">
     <div class="item"><span>Subtotal</span> <span>${{ order.subtotal }}</span></div>
     <div class="item"><span>Shipping</span> <span>${{ order.shipping }}</span></div>
     <div class="item"><span>Tax</span> <span>${{ order.tax }}</span></div>
 
-    <div class="total">
-      Total: ${{ order.total }}
-    </div>
+    <div class="total">Total: ${{ order.total }}</div>
   </div>
 
-  <a href="{% url 'product_list' %}" class="btn-home">Continue Shopping</a>
+  <!-- RAZORPAY PAYMENT BUTTON -->
+  <button id="rzp-button">Pay Now</button>
 
 </div>
+
+
+<!-- Razorpay Script -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+var options = {
+    "key": "{{ razorpay_key }}", 
+    "amount": "{{ razorpay_amount }}", 
+    "currency": "INR",
+    "name": "My Store",
+    "description": "Order Payment",
+    "order_id": "{{ razorpay_order_id }}",
+    "handler": function (response){
+        window.location.href = "/payment_success/";
+    },
+    "prefill": {
+        "name": "{{ order.billing_details.full_name }}",
+        "email": "{{ order.billing_details.email }}",
+        "contact": "{{ order.billing_details.phone }}"
+    },
+    "theme": {
+        "color": "#ff7b00"
+    }
+};
+var rzp1 = new Razorpay(options);
+
+document.getElementById('rzp-button').onclick = function(e){
+    rzp1.open();
+    e.preventDefault();
+}
+</script>
 
 </body>
 </html>

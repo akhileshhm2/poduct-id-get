@@ -323,10 +323,41 @@ def billing_page(request):
 # ---------------------------------------------------
 # ORDER SUCCESS PAGE
 # ---------------------------------------------------
+# def order_success(request):
+#     latest_order = Order.objects.order_by('-id').first()
+#     return render(request, "order_success.html", {
+#         'order': latest_order
+#     })
+
+import razorpay
+from django.conf import settings
+
 def order_success(request):
     latest_order = Order.objects.order_by('-id').first()
-    return render(request, "order_success.html", {
-        'order': latest_order
+
+    if not latest_order:
+        messages.error(request, "No order found!")
+        return redirect('cart')
+
+    # Razorpay client
+    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+    # Amount must be in PAISA
+    razorpay_order = client.order.create({
+        "amount": int(latest_order.total * 100),   # convert to paisa
+        "currency": "INR",
+        "payment_capture": "1"
     })
+
+    context = {
+        "order": latest_order,
+        "razorpay_order_id": razorpay_order["id"],
+        "razorpay_key": settings.RAZORPAY_KEY_ID,
+        "amount": latest_order.total * 100,  # in paisa for JS
+    }
+
+    return render(request, "order_success.html", context)
+
+    
 
 
