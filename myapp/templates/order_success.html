@@ -1,0 +1,127 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Summary</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    font-family: "Inter", "Poppins", sans-serif;
+    background: #0f0f0f;
+    color: #f1f1f1;
+  }
+
+  .success-container {
+    max-width: 700px;
+    margin: 70px auto;
+    padding: 40px;
+    background: #181818;
+    border-radius: 14px;
+    border: 1px solid #2a2a2a;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    animation: fadeIn 0.6s ease-in-out;
+  }
+
+  h1 {
+    color: #ff7b00;
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  h2 {
+    color: #ff7b00;
+    margin-top: 30px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+  }
+
+  .section {
+    margin-bottom: 20px;
+  }
+
+  .item {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+    color: #ccc;
+  }
+
+  .total {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #ff7b00;
+    border-top: 1px solid #333;
+    padding-top: 12px;
+    margin-top: 10px;
+  }
+
+  .btn-home {
+    background: linear-gradient(135deg, #ff8800, #ff6600);
+    color: #000;
+    padding: 14px 22px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: block;
+    width: fit-content;
+    margin: 30px auto 0;
+    transition: 0.3s ease;
+  }
+
+  .btn-home:hover {
+    background: linear-gradient(135deg, #ff6600, #d95300);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 18px rgba(255,102,0,0.5);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="success-container">
+
+  <h1>🎉 Order Summary!</h1>
+  <p style="text-align:center; color:#ccc;">Your order has been successfully placed. Please review your order summary below before proceeding to payment.</p>
+
+  <!-- CUSTOMER DETAILS -->
+  <h2>Customer Information</h2>
+  <div class="section">
+    <div class="item"><strong>Name:</strong> <span>{{ order.billing_details.full_name }}</span></div>
+    <div class="item"><strong>Email:</strong> <span>{{ order.billing_details.email }}</span></div>
+    <div class="item"><strong>Phone:</strong> <span>{{ order.billing_details.phone }}</span></div>
+    <div class="item"><strong>Address:</strong> 
+      <span>{{ order.billing_details.address }}, {{ order.billing_details.city }}, {{ order.billing_details.country }} - {{ order.billing_details.postal_code }}</span>
+    </div>
+  </div>
+
+  <!-- ORDER SUMMARY -->
+  <h2>Order Summary</h2>
+  <div class="section">
+    <div class="item"><span>Subtotal</span> <span>${{ order.subtotal }}</span></div>
+    <div class="item"><span>Shipping</span> <span>${{ order.shipping }}</span></div>
+    <div class="item"><span>Tax</span> <span>${{ order.tax }}</span></div>
+
+    <div class="total">
+      Total: ${{ order.total }}
+    </div>
+  </div>
+
+  <a href="{% url 'product_list' %}" class="btn-home">Continue Shopping</a>
+
+</div>
+
+</body>
+</html>

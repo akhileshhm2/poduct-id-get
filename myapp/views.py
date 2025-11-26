@@ -1,132 +1,332 @@
-from django.shortcuts import redirect,render,get_object_or_404
-from. models import Product
-from . models import Cartitem
-# View to render the product page
+# # from django.shortcuts import redirect,render,get_object_or_404
+# # from. models import Product
+# # from . models import Cartitem
+# # from .forms import DeliveryDetailsForm
+
+# # View to render the product page
+# # def product_list(request):
+# #     uploads = Product.objects.all()
+# #     return render(request,'men.html',{'uploads':uploads})
+
+# # def product_details(request,product_id):
+# #     upload=get_object_or_404(Product,id=product_id)   
+# #     return render(request, 'product_details.html', {'upload': upload})
+
+# # # Create your views here.
+# # def cart(request):
+# #     cart_items=Cartitem.objects.all()
+# #     total_amount=sum(item.total_price for item in cart_items)
+# #     return render(request,'cart.html',{
+# #         'cart_items':cart_items,
+# #         'total_amount':total_amount
+
+# #     })
+
+# # def add_to_cart(request,product_id):
+# #     product=get_object_or_404(Product,id=product_id)
+# #     cart_item,created=Cartitem.objects.get_or_create(product=product)
+
+# #     if not created:
+# #         cart_item.quantity +=1
+# #         cart_item.save()
+
+# #     return redirect('cart')
+# # from django.shortcuts import redirect, render, get_object_or_404
+# # from .models import Product, Cartitem
+
+# from django.shortcuts import redirect, render, get_object_or_404
+# from django.contrib import messages
+
+# from .models import Product, Cartitem, BillingDetails, Order
+# from .forms import DeliveryDetailsForm
 # def product_list(request):
 #     uploads = Product.objects.all()
-#     return render(request,'men.html',{'uploads':uploads})
+#     return render(request, 'men.html', {'uploads': uploads})
 
-# def product_details(request,product_id):
-#     upload=get_object_or_404(Product,id=product_id)   
+
+# def product_details(request, product_id):
+#     upload = get_object_or_404(Product, id=product_id)
 #     return render(request, 'product_details.html', {'upload': upload})
 
-# # Create your views here.
-# def cart(request):
-#     cart_items=Cartitem.objects.all()
-#     total_amount=sum(item.total_price for item in cart_items)
-#     return render(request,'cart.html',{
-#         'cart_items':cart_items,
-#         'total_amount':total_amount
 
+# def cart(request):
+#     cart_items = Cartitem.objects.all()
+#     total_amount = sum(item.total_price for item in cart_items)
+
+#     return render(request, 'cart.html', {
+#         'cart_items': cart_items,     # FIXED NAME
+#         'total_amount': total_amount  # FIXED NAME
 #     })
 
-# def add_to_cart(request,product_id):
-#     product=get_object_or_404(Product,id=product_id)
-#     cart_item,created=Cartitem.objects.get_or_create(product=product)
 
-#     if not created:
-#         cart_item.quantity +=1
-#         cart_item.save()
+# def add_to_cart(request, product_id):
+#     product = get_object_or_404(Product, id=product_id)
+
+#     cart_item, created = Cartitem.objects.get_or_create(product=product)
+
+#     if created:
+#         cart_item.quantity = 1      # FIX: Set initial quantity
+#     else:
+#         cart_item.quantity += 1     # Increase if exists
+
+#     cart_item.save()
 
 #     return redirect('cart')
-from django.shortcuts import redirect, render, get_object_or_404
-from .models import Product, Cartitem
+
+# def cart_update(request,cart_id):
+#     cart_item= get_object_or_404(Cartitem,id=cart_id)
+#     if request.method=='POST':
+#         quantity=int(request.POST.get("quantity",1))
+#         if quantity > 0:
+#             cart_item.quantity=quantity
+#             cart_item.save()
+#         else:
+#             cart_item.delete
+#     return redirect('cart')
 
 
+# def remove_from_cart(request,cart_id):
+#     cart_item=get_object_or_404(Cartitem,id=cart_id)
+#     cart_item.delete()
+#     return redirect('cart')
+
+# # from django.shortcuts import render, redirect
+# # from django.contrib import messages
+
+# # from .models import BillingDetails, Order
+
+
+# # def billing_page(request):
+
+# #     if request.method == "POST":
+# #         full_name = request.POST.get("full_name")
+# #         email = request.POST.get("email")
+# #         phone = request.POST.get("phone")
+# #         country = request.POST.get("country")
+# #         address = request.POST.get("address")
+# #         city = request.POST.get("city")
+# #         postal_code = request.POST.get("postal_code")
+
+# #         # ✅ Save billing details
+# #         billing = BillingDetails.objects.create(
+# #             user=request.user if request.user.is_authenticated else None,
+# #             full_name=full_name,
+# #             email=email,
+# #             phone=phone,
+# #             country=country,
+# #             address=address,
+# #             city=city,
+# #             postal_code=postal_code
+# #         )
+
+# #         # ✅ Create order (hardcoded totals — replace later with cart)
+# #         order = Order.objects.create(
+# #             billing_details=billing,
+# #             subtotal=118.00,
+# #             shipping=6.00,
+# #             tax=4.00,
+# #             total=128.00
+# #         )
+
+# #         messages.success(request, "Order placed successfully!")
+# #         return redirect("order_success")  # ✅ create this URL
+    
+
+# #     return render(request, "billing_details.html")
+# # from .forms import DeliveryDetailsForm
+# def billing_page(request):
+
+#     # Fetch all cart items
+#     cart_items = Cartitem.objects.all()
+
+#     # Calculate totals dynamically
+#     subtotal = sum(item.total_price for item in cart_items)
+#     shipping = 6.00
+#     tax = 4.00
+#     total = subtotal + shipping + tax
+
+#     if request.method == "POST":
+#         form = DeliveryDetailsForm(request.POST)
+
+#         if form.is_valid():
+#             # Save billing data
+#             billing = form.save(commit=False)
+#             billing.user = request.user if request.user.is_authenticated else None
+#             billing.save()
+
+#             # Create Order
+#             Order.objects.create(
+#                 billing_details=billing,
+#                 subtotal=subtotal,
+#                 shipping=shipping,
+#                 tax=tax,
+#                 total=total
+#             )
+
+#             # Clear cart after order
+#             cart_items.delete()
+
+#             messages.success(request, "Order placed successfully!")
+#             return redirect('order_success')
+
+#     else:
+#         form = DeliveryDetailsForm()
+
+#     return render(request, "billing_details.html", {
+#         "form": form,
+#         "subtotal": subtotal,
+#         "shipping": shipping,
+#         "tax": tax,
+#         "total": total
+#     })
+
+
+# # ---------------------------------------------------
+# # ORDER SUCCESS PAGE
+# # ---------------------------------------------------
+# def order_success(request):
+#     return render(request, "order_success.html")
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+
+from .models import Product, Cartitem, BillingDetails, Order
+from .forms import DeliveryDetailsForm
+from decimal import Decimal
+
+
+
+# ---------------------------------------------------
+# PRODUCT LIST PAGE
+# ---------------------------------------------------
 def product_list(request):
     uploads = Product.objects.all()
     return render(request, 'men.html', {'uploads': uploads})
 
 
+# ---------------------------------------------------
+# PRODUCT DETAILS PAGE
+# ---------------------------------------------------
 def product_details(request, product_id):
     upload = get_object_or_404(Product, id=product_id)
     return render(request, 'product_details.html', {'upload': upload})
 
 
+# ---------------------------------------------------
+# CART PAGE
+# ---------------------------------------------------
 def cart(request):
     cart_items = Cartitem.objects.all()
     total_amount = sum(item.total_price for item in cart_items)
 
     return render(request, 'cart.html', {
-        'cart_items': cart_items,     # FIXED NAME
-        'total_amount': total_amount  # FIXED NAME
+        'cart_items': cart_items,
+        'total_amount': total_amount
     })
 
 
+# ---------------------------------------------------
+# ADD TO CART
+# ---------------------------------------------------
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
 
     cart_item, created = Cartitem.objects.get_or_create(product=product)
 
     if created:
-        cart_item.quantity = 1      # FIX: Set initial quantity
+        cart_item.quantity = 1
     else:
-        cart_item.quantity += 1     # Increase if exists
+        cart_item.quantity += 1
 
     cart_item.save()
 
     return redirect('cart')
 
-def cart_update(request,cart_id):
-    cart_item= get_object_or_404(Cartitem,id=cart_id)
-    if request.method=='POST':
-        quantity=int(request.POST.get("quantity",1))
+
+# ---------------------------------------------------
+# UPDATE CART ITEM
+# ---------------------------------------------------
+def cart_update(request, cart_id):
+    cart_item = get_object_or_404(Cartitem, id=cart_id)
+
+    if request.method == 'POST':
+        quantity = int(request.POST.get("quantity", 1))
+
         if quantity > 0:
-            cart_item.quantity=quantity
+            cart_item.quantity = quantity
             cart_item.save()
         else:
-            cart_item.delete
+            cart_item.delete()
+
     return redirect('cart')
 
 
-def remove_from_cart(request,cart_id):
-    cart_item=get_object_or_404(Cartitem,id=cart_id)
+# ---------------------------------------------------
+# REMOVE FROM CART
+# ---------------------------------------------------
+def remove_from_cart(request, cart_id):
+    cart_item = get_object_or_404(Cartitem, id=cart_id)
     cart_item.delete()
     return redirect('cart')
 
-from django.shortcuts import render, redirect
-from django.contrib import messages
 
-from .models import BillingDetails, Order
-
-
+# ---------------------------------------------------
+# BILLING PAGE + ORDER PROCESSING
+# ---------------------------------------------------
 def billing_page(request):
 
+    cart_items = Cartitem.objects.all()
+
+    # Calculate dynamic totals
+    subtotal = Decimal(sum(item.total_price for item in cart_items))
+    shipping = Decimal("6.00")
+    tax = Decimal("4.00")
+    total = subtotal + shipping + tax
+
     if request.method == "POST":
-        full_name = request.POST.get("full_name")
-        email = request.POST.get("email")
-        phone = request.POST.get("phone")
-        country = request.POST.get("country")
-        address = request.POST.get("address")
-        city = request.POST.get("city")
-        postal_code = request.POST.get("postal_code")
+        form = DeliveryDetailsForm(request.POST)
 
-        # ✅ Save billing details
-        billing = BillingDetails.objects.create(
-            user=request.user if request.user.is_authenticated else None,
-            full_name=full_name,
-            email=email,
-            phone=phone,
-            country=country,
-            address=address,
-            city=city,
-            postal_code=postal_code
-        )
+        if form.is_valid():
 
-        # ✅ Create order (hardcoded totals — replace later with cart)
-        order = Order.objects.create(
-            billing_details=billing,
-            subtotal=118.00,
-            shipping=6.00,
-            tax=4.00,
-            total=128.00
-        )
+            # Save customer details
+            billing = form.save(commit=False)
+            billing.user = request.user if request.user.is_authenticated else None
+            billing.save()
 
-        messages.success(request, "Order placed successfully!")
-        return redirect("order_success")  # ✅ create this URL
-    
+            # Create order
+            Order.objects.create(
+                billing_details=billing,
+                subtotal=subtotal,
+                shipping=shipping,
+                tax=tax,
+                total=total
+            )
 
-    return render(request, "billing.html")
+            # Clear cart
+            cart_items.delete()
 
+            messages.success(request, "Order placed successfully!")
+            return redirect('order_success')
+
+    else:
+        form = DeliveryDetailsForm()
+
+    return render(request, "billing_details.html", {
+        "form": form,
+        "subtotal": subtotal,
+        "shipping": shipping,
+        "tax": tax,
+        "total": total
+    })
+
+
+# ---------------------------------------------------
+# ORDER SUCCESS PAGE
+# ---------------------------------------------------
+def order_success(request):
+    latest_order = Order.objects.order_by('-id').first()
+    return render(request, "order_success.html", {
+        'order': latest_order
+    })
 
 

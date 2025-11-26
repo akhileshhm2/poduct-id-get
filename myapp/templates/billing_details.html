@@ -142,32 +142,7 @@
 
     <form method="POST">
       {% csrf_token %}
-
-      <label>Full Name</label>
-      <input type="text" name="full_name" required>
-
-      <label>Email Address</label>
-      <input type="email" name="email" required>
-
-      <label>Phone Number</label>
-      <input type="text" name="phone" required>
-
-      <label>Country</label>
-      <select name="country" required>
-        <option>Select Country</option>
-        <option>India</option>
-        <option>USA</option>
-        <option>UK</option>
-      </select>
-
-      <label>Address</label>
-      <textarea name="address" rows="3" required></textarea>
-
-      <label>City</label>
-      <input type="text" name="city" required>
-
-      <label>Postal / ZIP Code</label>
-      <input type="text" name="postal_code" required>
+      {{ form.as_p }}
 
       <button type="submit" class="btn">Place Order</button>
     </form>
@@ -179,21 +154,21 @@
 
     <div class="summary-item">
       <span>Subtotal</span>
-      <span>{{total_amount}}</span>
+      <span>${{ subtotal }}</span>
     </div>
 
     <div class="summary-item">
       <span>Shipping</span>
-      <span>$6.00</span>
+      <span>${{ shipping }}</span>
     </div>
 
     <div class="summary-item">
       <span>Tax</span>
-      <span>$4.00</span>
+      <span>${{ tax }}</span>
     </div>
 
     <div class="total">
-      Total: $128.00
+      Total: ${{ total }}
     </div>
   </div>
 
