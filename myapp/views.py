@@ -306,7 +306,7 @@ def billing_page(request):
             cart_items.delete()
 
             messages.success(request, "Order placed successfully!")
-            return redirect('order_success')
+            return redirect('order_summary')
 
     else:
         form = DeliveryDetailsForm()
@@ -332,7 +332,7 @@ def billing_page(request):
 import razorpay
 from django.conf import settings
 
-def order_success(request):
+def order_summary(request):
     latest_order = Order.objects.order_by('-id').first()
 
     if not latest_order:
@@ -356,8 +356,64 @@ def order_success(request):
         "amount": latest_order.total * 100,  # in paisa for JS
     }
 
-    return render(request, "order_success.html", context)
+    return render(request, "order_summary.html", context)
 
+from . models import UserProfile
+from django.contrib.auth.models import User
     
+def signup(request):
+    if request.method == "POST":
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        confirm_password = request.POST.get("confirm_password")
+        country = request.POST.get("country")    # ← Get country from form
+
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return redirect("signup")
+        
+        if User.objects.filter(username=email).exists():
+            messages.error(request, "Email already registered.")
+            return redirect("signup")
+
+        # Create user
+        user = User.objects.create_user(
+            username=email,
+            email=email,
+            password=password,
+            first_name=first_name,
+            last_name=last_name
+        )
+
+        # Create user profile WITH country field
+        UserProfile.objects.create(
+            user=user,
+            country=country
+        )
+
+        messages.success(request, "Signup successful! Please login.")
+        return redirect("signin")
+
+    return render(request, "signup.html")
+
+
+from django.contrib.auth import authenticate, login
+
+def signin(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        user = authenticate(request,username=email, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect("product_list")
+        else:
+            messages.error(request, "Invalid email or password")
+
+    return render(request, "login.html")
 
 

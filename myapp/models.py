@@ -94,5 +94,20 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order #{self.id}"
+    
+    from django.contrib.auth.models import User
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    country = models.CharField(max_length=100, blank=True, null=True)
+
+    # Add more custom fields easily:
+    # phone = models.CharField(max_length=15, blank=True, null=True)
+    # address = models.TextField(blank=True, null=True)
+    # date_of_birth = models.DateField(blank=True, null=True)
+
+    def __str__(self):
+        return self.user.email
 
 
