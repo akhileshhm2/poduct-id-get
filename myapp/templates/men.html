@@ -18,6 +18,66 @@
   }
 
   /* -------------------------------------- */
+  /* NAVBAR */
+  /* -------------------------------------- */
+  .navbar {
+    width: 100%;
+    background: #181818;
+    border-bottom: 1px solid #222;
+    padding: 14px 0;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+
+  .navbar-container {
+    width: 92%;
+    max-width: 1300px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #ff7b00;
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 20px;
+  }
+
+  .nav-links a {
+    color: #f1f1f1;
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: 0.3s;
+  }
+
+  .nav-links a:hover {
+    background: #ff7b00;
+    color: #000;
+  }
+
+  .logout-btn {
+    background: #ff3d3d;
+    color: #000 !important;
+    font-weight: 600;
+  }
+
+  .logout-btn:hover {
+    background: #d92c2c !important;
+  }
+
+  /* -------------------------------------- */
   /* PREMIUM HEADER SECTION */
   /* -------------------------------------- */
   .hero {
@@ -157,7 +217,31 @@
 
 <body>
 
-<!-- HERO / HEADER SECTION -->
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="navbar-container">
+
+    <a href="{% url 'product_list' %}" class="logo">FashionStore</a>
+
+    <div class="nav-links">
+
+      <a href="{% url 'product_list' %}">Home</a>
+      <a href="{% url 'cart' %}">Cart</a>
+
+      {% if user.is_authenticated %}
+          <a href="{% url 'order_history' %}">Orders</a>
+          <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+      {% else %}
+          <a href="{% url 'signup' %}">Signup</a>
+          <a href="{% url 'signin' %}">Signin</a>
+      {% endif %}
+
+    </div>
+
+  </div>
+</div>
+
+<!-- HERO SECTION -->
 <div class="hero">
   <h1>Men Collection</h1>
   <p>Style isn't just clothing — it's an attitude you wear every single day.</p>
@@ -169,6 +253,7 @@
 
   <div class="card-grid">
 
+    <!-- PRODUCT 1 -->
     <div class="card">
       <a href="{% url 'product_details' 1 %}">
         <img src="{% static 'dress/brazil-2.jpg' %}" alt="Floral Kids Dress">
@@ -178,12 +263,13 @@
         <div class="card-category">Girls · Summer</div>
         <div class="price">$29.00</div>
         <div class="actions">
-          <a href="cart.html" class="btn">Add to Cart</a>
-          <a href="whislist.html" class="btn">Whislist</a>
+          <a href="{% url 'add_to_cart' 1 %}" class="btn">Add to Cart</a>
+          <a href="#" class="btn">Whislist</a>
         </div>
       </div>
     </div>
 
+    <!-- PRODUCT 2 -->
     <div class="card">
       <a href="{% url 'product_details' 2 %}">
         <img src="{% static 'dress/brazil.jpg' %}" alt="Denim Dungaree for Kids">
@@ -193,12 +279,13 @@
         <div class="card-category">Boys · Casual</div>
         <div class="price">$35.00</div>
         <div class="actions">
-          <a href="cart.html" class="btn">Add to Cart</a>
-          <a href="whislist.html" class="btn">Whislist</a>
+          <a href="{% url 'add_to_cart' 2 %}" class="btn">Add to Cart</a>
+          <a href="#" class="btn">Whislist</a>
         </div>
       </div>
     </div>
 
+    <!-- PRODUCT 3 -->
     <div class="card">
       <a href="{% url 'product_details' 4 %}">
         <img src="{% static 'dress/flower.jpg' %}" alt="Party Frock for Girls">
@@ -208,12 +295,13 @@
         <div class="card-category">Girls · Partywear</div>
         <div class="price">$49.00</div>
         <div class="actions">
-          <a href="cart.html" class="btn">Add to Cart</a>
-          <a href="whislist.html" class="btn">Whislist</a>
+          <a href="{% url 'add_to_cart' 4 %}" class="btn">Add to Cart</a>
+          <a href="#" class="btn">Whislist</a>
         </div>
       </div>
     </div>
 
+    <!-- PRODUCT 4 -->
     <div class="card">
       <a href="{% url 'product_details' 5 %}">
         <img src="{% static 'dress/shirtss.jpg' %}" alt="Casual T-Shirt and Shorts Set">
@@ -222,24 +310,25 @@
         <div class="card-title">Casual T-Shirt & Shorts</div>
         <div class="card-category">Boys · Everyday</div>
         <div class="price">$25.00</div>
-        <div <div class="actions">
-          <a href="cart.html" class="btn">Add to Cart</a>
-          <a href="whislist.html" class="btn">Whislist</a>
+        <div class="actions">
+          <a href="{% url 'add_to_cart' 5 %}" class="btn">Add to Cart</a>
+          <a href="#" class="btn">Whislist</a>
         </div>
       </div>
     </div>
 
+    <!-- PRODUCT 5 -->
     <div class="card">
       <a href="{% url 'product_details' 6 %}">
-        <img src="{% static 'dress/white-shirt.jpg' %}" alt="Princess Gown for Kids">
+        <img src="{% static 'dress/white-shirt.jpg' %}" alt="Kids White Shirt">
       </a>
       <div class="card-content">
         <div class="card-title">Princess Gown</div>
         <div class="card-category">Girls · Fancy</div>
         <div class="price">$59.00</div>
         <div class="actions">
-          <a href="cart.html" class="btn">Add to Cart</a>
-          <a href="whislist.html" class="btn">Whislist</a>
+          <a href="{% url 'add_to_cart' 6 %}" class="btn">Add to Cart</a>
+          <a href="#" class="btn">Whislist</a>
         </div>
       </div>
     </div>

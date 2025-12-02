@@ -1,0 +1,202 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Order History</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        margin: 0;
+        background: #0f0f0f;
+        color: #fff;
+        font-family: "Inter", "Poppins", sans-serif;
+    }
+
+    /* HERO HEADER */
+    .hero {
+        background: linear-gradient(135deg, #141414, #1c1c1c);
+        padding: 60px 25px;
+        text-align: center;
+        border-bottom: 1px solid #222;
+    }
+
+    .hero h1 {
+        font-size: 3rem;
+        color: #ff7b00;
+        margin-bottom: 12px;
+        font-weight: 700;
+    }
+
+    .hero p {
+        font-size: 1.1rem;
+        color: #ccc;
+        max-width: 650px;
+        margin: auto;
+        line-height: 1.6;
+    }
+
+    /* CONTAINER */
+    .container {
+        max-width: 1200px;
+        margin: 50px auto;
+        padding: 0 20px;
+    }
+
+    /* ORDER CARD WRAPPER */
+    .order-card {
+        background: #181818;
+        border: 1px solid #2a2a2a;
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 30px;
+        transition: 0.3s ease;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    .order-card:hover {
+        border-color: #ff7b00;
+        transform: translateY(-6px);
+        box-shadow: 0 10px 28px rgba(0,0,0,0.6);
+    }
+
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #333;
+        padding-bottom: 12px;
+    }
+
+    .order-id {
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .order-date {
+        color: #bbb;
+        font-size: 0.95rem;
+    }
+
+    /* DETAILS GRID */
+    .details-grid {
+        margin-top: 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+    }
+
+    .detail-block {
+        background: #202020;
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid #333;
+    }
+
+    .detail-block h3 {
+        color: #ff7b00;
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+    }
+
+    .detail-item {
+        margin: 6px 0;
+        color: #ccc;
+        font-size: 0.95rem;
+    }
+
+    .total-amount {
+        margin-top: 20px;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #ff7b00;
+        text-align: right;
+    }
+
+    /* EMPTY MESSAGE */
+    .empty-msg {
+        text-align: center;
+        color: #aaa;
+        font-size: 1.3rem;
+        margin-top: 80px;
+    }
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="hero">
+    <h1>Your Orders</h1>
+    <p>Track your past purchases and order details in one place.</p>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="container">
+
+    {% if orders %}
+        {% for order in orders %}
+        
+        <div class="order-card">
+
+            <!-- ORDER HEADER -->
+            <div class="order-header">
+                <div class="order-id">Order #{{ order.id }}</div>
+                <div class="order-date">{{ order.order_date }}</div>
+            </div>
+
+            <!-- ORDER DETAIL BOXES -->
+            <div class="details-grid">
+
+                <!-- CUSTOMER DETAILS -->
+                <div class="detail-block">
+                    <h3>Customer Info</h3>
+                    <div class="detail-item"><strong>Name:</strong> {{ order.billing_details.full_name }}</div>
+                    <div class="detail-item"><strong>Email:</strong> {{ order.billing_details.email }}</div>
+                    <div class="detail-item"><strong>Phone:</strong> {{ order.billing_details.phone }}</div>
+                </div>
+
+                <!-- SHIPPING ADDRESS -->
+                <div class="detail-block">
+                    <h3>Shipping Address</h3>
+                    <div class="detail-item">{{ order.billing_details.address }}</div>
+                    <div class="detail-item">{{ order.billing_details.city }}, {{ order.billing_details.country }}</div>
+                    <div class="detail-item">{{ order.billing_details.postal_code }}</div>
+                </div>
+
+                <!-- ORDER AMOUNT DETAILS -->
+                <div class="detail-block">
+                    <h3>Order Breakdown</h3>
+                    <div class="detail-item"><strong>Subtotal:</strong> ${{ order.subtotal }}</div>
+                    <div class="detail-item"><strong>Shipping:</strong> ${{ order.shipping }}</div>
+                    <div class="detail-item"><strong>Tax:</strong> ${{ order.tax }}</div>
+                    <div class="detail-item"><strong>Status:</strong> 
+                        {% if order.is_paid %}
+                            <span style="color:#34ff71;">Paid</span>
+                        {% else %}
+                            <span style="color:#ff3d3d;">Not Paid</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- TOTAL -->
+            <div class="total-amount">Total Paid: ${{ order.total }}</div>
+
+        </div>
+
+        {% endfor %}
+    {% else %}
+        <div class="empty-msg">You have no previous orders.</div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>

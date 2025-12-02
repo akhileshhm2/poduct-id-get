@@ -216,7 +216,8 @@ def product_details(request, product_id):
 # CART PAGE
 # ---------------------------------------------------
 def cart(request):
-    cart_items = Cartitem.objects.all()
+    # cart_items = Cartitem.objects.all()
+    cart_items = Cartitem.objects.filter(user=request.user)
     total_amount = sum(item.total_price for item in cart_items)
 
     return render(request, 'cart.html', {
@@ -231,7 +232,7 @@ def cart(request):
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
 
-    cart_item, created = Cartitem.objects.get_or_create(product=product)
+    cart_item, created = Cartitem.objects.get_or_create(product=product,user=request.user)
 
     if created:
         cart_item.quantity = 1
@@ -274,6 +275,7 @@ def remove_from_cart(request, cart_id):
 # BILLING PAGE + ORDER PROCESSING
 # ---------------------------------------------------
 def billing_page(request):
+    cart_items = Cartitem.objects.filter(user=request.user)
 
     cart_items = Cartitem.objects.all()
 
@@ -295,6 +297,7 @@ def billing_page(request):
 
             # Create order
             Order.objects.create(
+                user=request.user,
                 billing_details=billing,
                 subtotal=subtotal,
                 shipping=shipping,
@@ -415,5 +418,23 @@ def signin(request):
             messages.error(request, "Invalid email or password")
 
     return render(request, "login.html")
+
+
+from django.contrib.auth import logout
+
+def logout_view(request):
+    logout(request)
+    return redirect('signin')
+
+
+
+def order_history(request):
+    orders = Order.objects.filter(user=request.user).order_by('-order_date')
+    return render(request, 'order_history.html', {'orders': orders})
+
+def payment_success(request):
+    cart_items=Cartitem.objects.filter(user=request.user)
+    cart_items.delete()
+    return render(request,"payment_success.html")
 
 
