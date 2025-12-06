@@ -16,6 +16,10 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout"),
     path('order_history/', views.order_history, name='order_history'),
     path("payment_success/", views.payment_success, name="payment_success"),
+    path('wishlist/', views.wishlist, name="wishlist"),
+    path('add_to_wishlist/<int:product_id>/', views.add_to_wishlist, name="add_to_wishlist"),
+    path('remove_wishlist/<int:product_id>/', views.remove_wishlist, name="remove_wishlist"),
+
 
 ]
 

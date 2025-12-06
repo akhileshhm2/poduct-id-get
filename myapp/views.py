@@ -193,6 +193,7 @@ from django.contrib import messages
 from .models import Product, Cartitem, BillingDetails, Order
 from .forms import DeliveryDetailsForm
 from decimal import Decimal
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -215,6 +216,7 @@ def product_details(request, product_id):
 # ---------------------------------------------------
 # CART PAGE
 # ---------------------------------------------------
+@login_required(login_url='signin')
 def cart(request):
     # cart_items = Cartitem.objects.all()
     cart_items = Cartitem.objects.filter(user=request.user)
@@ -229,6 +231,7 @@ def cart(request):
 # ---------------------------------------------------
 # ADD TO CART
 # ---------------------------------------------------
+@login_required(login_url='signin')
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
 
@@ -247,6 +250,7 @@ def add_to_cart(request, product_id):
 # ---------------------------------------------------
 # UPDATE CART ITEM
 # ---------------------------------------------------
+@login_required(login_url='sigin')
 def cart_update(request, cart_id):
     cart_item = get_object_or_404(Cartitem, id=cart_id)
 
@@ -265,6 +269,7 @@ def cart_update(request, cart_id):
 # ---------------------------------------------------
 # REMOVE FROM CART
 # ---------------------------------------------------
+@login_required(login_url='signin')
 def remove_from_cart(request, cart_id):
     cart_item = get_object_or_404(Cartitem, id=cart_id)
     cart_item.delete()
@@ -274,6 +279,7 @@ def remove_from_cart(request, cart_id):
 # ---------------------------------------------------
 # BILLING PAGE + ORDER PROCESSING
 # ---------------------------------------------------
+@login_required(login_url='signin')
 def billing_page(request):
     cart_items = Cartitem.objects.filter(user=request.user)
 
@@ -335,6 +341,7 @@ def billing_page(request):
 import razorpay
 from django.conf import settings
 
+@login_required(login_url='signin')
 def order_summary(request):
     latest_order = Order.objects.order_by('-id').first()
 
@@ -427,14 +434,44 @@ def logout_view(request):
     return redirect('signin')
 
 
-
+@login_required(login_url='signin')
 def order_history(request):
     orders = Order.objects.filter(user=request.user).order_by('-order_date')
     return render(request, 'order_history.html', {'orders': orders})
 
+@login_required(login_url='signin')
 def payment_success(request):
     cart_items=Cartitem.objects.filter(user=request.user)
     cart_items.delete()
     return render(request,"payment_success.html")
+
+from .models import Wishlist
+
+@login_required(login_url='signin')
+def add_to_wishlist(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    Wishlist.objects.get_or_create(user=request.user, product=product)
+    messages.success(request, "Added to wishlist!")
+    return redirect('wishlist')
+
+
+@login_required(login_url='signin')
+def wishlist(request):
+    items = Wishlist.objects.filter(user=request.user)
+    return render(request, 'wishlist.html', {'items': items})
+
+
+@login_required(login_url='signin')
+def remove_wishlist(request, product_id):
+    item = get_object_or_404(Wishlist, user=request.user, product_id=product_id)
+    item.delete()
+    return redirect('wishlist')
+
+# @login_required(login_url='signin')
+# def remove_wishlist(request, product_id):
+#     item = Wishlist.objects.filter(user=request.user, product_id=product_id).first()
+#     if item:
+#         item.delete()
+#     return redirect('wishlist')
 
 
